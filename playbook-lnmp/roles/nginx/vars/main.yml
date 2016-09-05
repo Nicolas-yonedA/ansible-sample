@@ -1,0 +1,4 @@
+nginx_conf:
+  listen: 8080
+  server_name: localhost
+    

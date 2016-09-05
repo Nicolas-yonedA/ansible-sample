@@ -1,0 +1,31 @@
+---
+- name: yumで必要なパッケージインストール
+  yum: name={{ item }} state=installed
+  with_items:
+   - php
+   - php-fpm
+   - php-mysql
+  notify: PHP-FPMとNginx再起動
+
+- name: 設定ファイルを変更
+  copy: src=www.conf dest=/etc/php-fpm.d/ owner=root group=root mode=644
+  notify: PHP-FPMとNginx再起動
+
+- name: /var/nginxを設置
+  file: path=/var/nginx state=directory owner=nginx group=nginx mode="u=rwx,g=rx,o-rwx"
+
+- name: ルートディレクトリを設置
+  file: path=/var/nginx/sample state=directory owner=nginx group=nginx mode="u=rwx,g=rx,o-rwx"
+
+- name: indexを設置
+  copy: src=index.php dest=/var/nginx/sample/index.php owner=nginx group=nginx mode=644 force=no
+
+- name: mysqlの接続確認PHPファイルを設置
+  template: src=mysql.php.j2 dest=/var/nginx/sample/mysql.php owner=nginx group=nginx mode=644
+
+- name: PHP-FPMとNginx起動
+  service: name={{ item }} state=started
+  with_items:
+    - php-fpm
+    - nginx
+

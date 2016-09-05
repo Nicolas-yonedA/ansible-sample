@@ -1,0 +1,4 @@
+---
+is_lb: True
+nginx_conf_template: loadbalancer.conf.j2
+

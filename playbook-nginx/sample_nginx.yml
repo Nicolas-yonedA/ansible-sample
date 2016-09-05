@@ -1,0 +1,13 @@
+---
+- hosts: webservers
+  become: True
+  tasks:
+    - name: yumにnginxレポジトリをインストール
+      yum: name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    - name: yumでnginxインストール
+      yum: name=nginx state=installed
+      notify: 再起動
+  handlers: 
+    - name: 再起動
+      service: name=nginx enabled=yes state=restarted
+

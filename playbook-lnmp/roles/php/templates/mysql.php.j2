@@ -1,0 +1,34 @@
+<?php
+try {
+	// PDO
+	$pdo = new PDO('mysql:host=192.168.11.21;dbname=sample', '{{ db_user.name }}', '{{ db_user.pass }}');
+
+	// CREATE TABLE
+	$sql = <<<SQL
+CREATE TABLE IF NOT EXISTS `users`
+(
+  id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(127) DEFAULT '' 
+)
+SQL;
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute();
+
+	// INSERT
+	$sql = <<<SQL
+INSERT INTO users
+(name) 
+VALUES 
+('user1')
+SQL;
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute();
+
+	// SELECT
+	$stmt = $pdo->query('SELECT * FROM users');
+	echo '<pre>';
+	var_dump($stmt->fetchAll());
+} catch (PDOException $e) {
+	exit($e->getMessage());
+}
+

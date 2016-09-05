@@ -1,0 +1,7 @@
+---
+- name: PHP-FPMとNginx再起動
+  service: name={{ item }} enabled=true state=restarted
+  with_items:
+    - nginx
+    - php-fpm
+

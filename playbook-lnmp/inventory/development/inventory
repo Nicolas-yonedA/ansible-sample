@@ -1,0 +1,14 @@
+[dbservers]
+192.168.11.21
+
+[appservers]
+192.168.11.11
+192.168.11.12
+
+[loadbalancers]
+192.168.11.10
+
+[webservers:children]
+appservers
+loadbalancers
+

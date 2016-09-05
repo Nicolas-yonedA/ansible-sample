@@ -1,0 +1,4 @@
+---
+is_lb: False
+nginx_conf_template: default.conf.j2
+

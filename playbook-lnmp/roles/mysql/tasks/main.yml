@@ -1,0 +1,33 @@
+---
+- name: Mysqlをインストール
+  yum: name={{ item }} state=installed
+  with_items:
+    - mysql
+    - mysql-server
+
+- name: MySQL起動
+  service: name=mysqld enabled=yes state=started
+
+- name: その他必要なパッケージをインストール
+  yum: name={{ item }} state=installed
+  with_items:
+    - gcc
+    - mysql-devel
+    - MySQL-python
+
+- name: rootのパスワード確認
+  mysql_user: name=root password={{ db_root_pass }} login_user=root login_password={{ db_root_pass }}
+  ignore_errors: True
+  register: res_root_pass
+
+- name: rootのパスワード変更
+  mysql_user: name=root password={{ db_root_pass }}
+  when: res_root_pass|failed
+
+- name: DB作成
+  mysql_db: name={{ db_name }} state=present login_user=root login_password={{ db_root_pass }}
+
+- name: DBにユーザ追加
+  mysql_user: name={{ item.name }} password={{ item.pass }} priv={{ db_name }}.*:ALL host={{ item.host }} state=present login_user=root login_password={{ db_root_pass }}
+  with_items: '{{ db_users }}'
+

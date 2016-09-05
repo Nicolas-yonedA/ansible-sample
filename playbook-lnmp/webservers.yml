@@ -1,0 +1,7 @@
+---
+- hosts: webservers
+  become: True
+  roles:
+    - nginx
+    - { role: php, when: not is_lb }
+

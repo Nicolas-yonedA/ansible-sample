@@ -1,0 +1,26 @@
+---
+- name: yumにnginxレポジトリをインストール
+  yum: name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+
+- name: yumで必要なパッケージインストール
+  yum: name={{ item }} state=installed
+  with_items:
+   - nginx
+   - libselinux-python
+  notify: Nginx再起動
+
+- name: /var/nginxを設置
+  file: path=/var/nginx state=directory owner=nginx group=nginx mode="u=rwx,g=rx,o-rwx"
+  when: not is_lb
+
+- name: ルートディレクトリを設置
+  file: path=/var/nginx/sample state=directory owner=nginx group=nginx mode="u=rwx,g=rx,o-rwx"
+  when: not is_lb
+
+- name: 設定ファイル設置
+  template: src={{ nginx_conf_template }} dest=/etc/nginx/nginx.conf owner=root group=root mode=644
+  notify: Nginx再起動
+
+- name: Nginx起動
+  service: name=nginx state=started
+
